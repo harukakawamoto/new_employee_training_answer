@@ -195,8 +195,16 @@ EarlyStoppingは学習が進まなくなったら自動的に学習を終了す�
 導入例は以下の通りです。
 
 ```python
+from tensorflow.keras.callbacks import EarlyStopping
 
+early_stopping = EarlyStopping(
+                                monitor = "val_loss",
+                                min_delta = 0.00,
+                                patient = 3
+)
 ```
+
+`earlyStopping`が設定できたら`fit`の引数に
 
 
 ## 分析
