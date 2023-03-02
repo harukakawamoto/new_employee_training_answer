@@ -200,6 +200,7 @@ plt.plot(history.history['val_accuracy'])
 ```
 
 出力例
+
 ![image](https://user-images.githubusercontent.com/86188830/222321469-ce2bf506-7fa7-46cf-af74-28812de38857.png)
 
 
