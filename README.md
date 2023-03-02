@@ -183,10 +183,14 @@ EarlyStoppingは学習が進まなくなったら自動的に学習を終了す�
 
 ```
 
-Historyオブジェクトのhistoryメソッドは`accuracy`と`val_accuracy`をキーとして、各学習履歴を値とした辞書を返します。
 
 ## 分析
 > 先ほど格納した`history`というオブジェクトの`history`メソッドを用いて`accuracy`と`val_accuracy`の変化のグラフを`matplotlib`を用いて描写してください。
+
+
+Historyオブジェクトのhistoryメソッドは`accuracy`と`val_accuracy`をキーとして、各学習履歴を値とした辞書を返すので、キーである`accuracy`、`val_accuracy`を指定すると値を取得できます。
+
+取得できた値を`matplotlib`で描写することで、学習履歴を可視化することができます。
 
 ```python
 import matplotlib.pyplot as plt
@@ -195,6 +199,7 @@ plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
 ```
 
+出力例
 ![image](https://user-images.githubusercontent.com/86188830/222321469-ce2bf506-7fa7-46cf-af74-28812de38857.png)
 
 
