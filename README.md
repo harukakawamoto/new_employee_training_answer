@@ -9,6 +9,13 @@
 
 ## データの前処理
 > 1. `ImageDataGenerator`インスタンスを生成してください。
+ここでは`ImageDataGenerator`クラスでデータを擬似的に増やす処理の設定を行なっています。ImageDataGeneratorは`リアルタイムにデータ拡張しながら，テンソル画像データのバッチを生成します．また，このジェネレータは，データを無限にループするので，無限にバッチを生成します.`
+オプションでは画像に対する処理を指定することができ、下の例では画像に対して以下の処理をしています。
+* `width_shift_range`：画像に対してランダムに水平に移動させる。
+* `rotation_range`：画像に対してランダムに回転させる。
+* `height_shift_range`：画像に対してランダムに垂直に移動させる。
+* `zoom_range`：画像に対してランダムに拡大する。
+上記オプション以外の詳しい説明は[公式ドキュメント](https://keras.io/ja/preprocessing/image/#imagedatagenerator_1)を見てみてください。
 
 ```python
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -24,6 +31,8 @@ gen = ImageDataGenerator(
 ```
 
 > 2. `ImageDataGenerator`クラスの`flow_from_directory`メソッドを用いて学習用のデータと検証用のデータのオブジェクトを生成してください。
+
+ここでは`flow_from_directory`メソッドを
 
 ```python
 train = gen.flow_from_directory(
