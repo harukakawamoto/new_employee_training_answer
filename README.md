@@ -77,6 +77,27 @@ print(label_dic)
 > 1. [Kerasのドキュメント](https://keras.io/ja/applications/)から好きなモデルを選択してください。
 > 2. 選択したモデルをImageNetで学習したモデルに設定してください。
 
+ここからモデル構築を行なっていきます。
+
+モデルは任意のものが選べますが、Kerasで提供されているモデルは以下の通りです。
+* Xception
+* VGG16
+* VGG19
+* ResNet50
+* InceptionV3
+* InceptionResNetV2
+* MobileNet
+* DenseNet
+* NASNet
+* MobileNetV2
+
+解答例では`ResNet50`を採用していますが、他のモデルを使いたい時はモデルのインポートの部分の`resnet50`の部分をそれぞれのモデル名に変更すれば導入できます。
+
+`weights`に何も指定しなければ重みが0のモデルが導入されますが、`imagenet`を指定することで、ImageNetで学習されたモデルを導入することができます。
+
+`include_top`はモデルの出力層を含めるかどうかのオプションで、今回は導入した既存モデルに層を加えていくため`False`にします。
+
+出力層を含むとImageNetで学習している都合上1000個の出力が行われることになり、今回の3つの出力(バスケットボール・テニスボール・ゴルフボール)に合わなくなります。
 
 ```python
 from tensorflow.keras.layers import Input,Dense,Flatten,Dropout
@@ -88,7 +109,9 @@ ResNet50 = ResNet50(weights='imagenet',include_top=False, input_tensor=Input(sha
 )))
 ```
 
-3. 学習済みモデルに[追加層](https://keras.io/ja/layers/core/)を加えてください。
+`input_tensor`でモデルに入力する画像の形を指定することができます。
+
+> 3. 学習済みモデルに[追加層](https://keras.io/ja/layers/core/)を加えてください。
 ```python
 inputs = ResNet50.output
 x = Flatten()(inputs)
