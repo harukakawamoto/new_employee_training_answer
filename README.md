@@ -248,13 +248,15 @@ plt.plot(history.history['val_accuracy'])
 > 1. 学習したモデルクラスの[predict](https://keras.io/ja/models/model/#predict)メソッドでtestフォルダに入っている画像を予測してください。**画像のままでは使えないので画像をNumpy配列に変換し、作成したモデルの入力のテンソルにリサイズする処理をしてください。**
 > 2. 上記処理をtestフォルダ内にあるすべての画像で行い、正答率を算出してください。**正答率は(正解数/testフォルダ内の画像数)で求めることとする。**
 
+**以下で示すコードはあくまで一例です。そっくりそのままのコードである必要はありません。**
+
 ```python
 import os
 import numpy as np
 from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing import image
 ```
-
+ここでは必要なモジュールのインポートをしています。
 
 
 
@@ -269,13 +271,15 @@ def get_label(path):
   else:
     pass
 ```
+ここではテスト用の画像のパス名とラベルを紐付ける関数を作成しています。例えば`golfball01.jpg`という名前であれば`golfball`という文字列を返すようにしています。
 
+**※テストデータがまとまっているフォルダ(testフォルダ)には各ボールの名前が入っていることが前提です。**
 
 ```python
 root_path = <テストデータフォルダパス>
 test_img_list = os.listdir(root_path)
+# 予測が当たった数をカウントする変数
 true_num = 0
-false_num = 0
 for path in test_img_list:
   input = image.load_img(os.path.join(root_path,path),target_size=(256,256))
   input = np.expand_dims(input,axis=0)
@@ -288,7 +292,57 @@ for path in test_img_list:
   if predict_label == acc_label:
     true_num += 1
 
+print("正答率は{}".format(true_num/(len(test_img_list))))
 ```
+
+上記コードの解説を以下に示します。
+
+```python
+test_img_list = os.listdir(root_path)
+```
+ここではテストフォルダにある画像をリスト形式でまとめています。
+
+
+```python
+input = image.load_img(os.path.join(root_path,path),target_size=(256,256))
+input = np.expand_dims(input,axis=0)
+input = preprocess_input(input)
+```
+ここではテスト用の画像を読み込み256×256の形にリサイズしてNumpy形式で読み込んでいます。
+
+また`expand_dims`でデータを3次元から4次元に拡張しています。
+
+最後に`preprocess_input`でモデルに最適な前処理を施しています。
+
+```python
+result = model.predict(input)
+```
+ここで学習させた`model`オブジェクトの`predict`メソッドで画像を予測しています。
+
+
+
+```python
+predict_label = list(label_dic.keys())[np.argmax(result[0])]
+```
+
+ここで予測された画像のラベルを取り出す処理を行なっています。
+
+`np.argmax`でリストのうち一番値が大きい要素番号を取得し、ラベルに対応するボールの種類(`label_dic.keys()`)を取り出しています。
+
+```python
+acc_label = get_label(path)
+print(predict_label, acc_label)
+# 正答率計算
+if predict_label == acc_label:
+    true_num += 1
+```
+最後に画像のパスから何のボールかを先ほど作成した関数で取得し、正解ラベルと画像のラベルを比較して、一致したら`true_num`にカウントしています。
+
+
+```python
+print("正答率は{}".format(true_num/(len(test_img_list))))
+```
+カウントされた`true_num`に対してテスト画像の枚数を割ることで正答率を出しています。
 
 ## モデルの保存
 > `検証`での正答率が8割ほどであればモデルを`save`メソッドで保存してください。**この時モデルの名前に`.h5`をつけてください。**
