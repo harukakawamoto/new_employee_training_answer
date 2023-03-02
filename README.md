@@ -8,7 +8,7 @@
 集めた画像はこちらのフォルダに入っています。
 
 ## データの前処理
-1. `ImageDataGenerator`インスタンスを生成してください。
+> 1. `ImageDataGenerator`インスタンスを生成してください。
 
 ```python
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -23,7 +23,7 @@ gen = ImageDataGenerator(
     val
 ```
 
-2. `ImageDataGenerator`クラスの`flow_from_directory`メソッドを用いて学習用のデータと検証用のデータのオブジェクトを生成してください。
+> 2. `ImageDataGenerator`クラスの`flow_from_directory`メソッドを用いて学習用のデータと検証用のデータのオブジェクトを生成してください。
 
 ```python
 train = gen.flow_from_directory(
@@ -45,8 +45,9 @@ print(label_dic)
 ```
 
 
-## モデルの導入
-
+## 転移学習モデルの構築
+> 1. [Kerasのドキュメント](https://keras.io/ja/applications/)から好きなモデルを選択してください。
+> 2. 選択したモデルをImageNetで学習したモデルに設定してください。
 ```python
 from tensorflow.keras.layers import Input,Dense,Flatten,Dropout
 from tensorflow.keras.optimizers import experimental
@@ -57,9 +58,7 @@ ResNet50 = ResNet50(weights='imagenet',include_top=False, input_tensor=Input(sha
 )))
 ```
 
-## 転移学習用に再構築
-
-
+3. 学習済みモデルに[追加層](https://keras.io/ja/layers/core/)を加えてください。
 ```python
 inputs = ResNet50.output
 x = Flatten()(inputs)
@@ -73,11 +72,17 @@ prediction = Dense(3,activation='softmax')(x)
 model=Model(inputs=ResNet50.input,outputs=prediction)
 ```
 
+完成したモデルを確認するには`summary`メソッドを使います。
 
 ```python
 model.summary()
 ```
+
 ## コンパイル
+> [TensorFlowのドキュメント](https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/experimental)から任意の`optimizer`を選択してください。
+
+モデルのコンパイルは[公式ドキュメント](https://keras.io/ja/models/model/#compile)を参考にして作成します。
+
 ```
 model.compile(optimizer=experimental.SGD(),
             loss='categorical_crossentropy',
@@ -85,6 +90,9 @@ model.compile(optimizer=experimental.SGD(),
 ```
 
 ## 学習
+> 1. `epochs`は任意の数字に設定してください。**多すぎると過学習の恐れがあります。必要に応じて[EarlyStopping](https://keras.io/ja/callbacks/#earlystopping)を設定してください。**
+> 2. 学習する際に用いるfitメソッドは学習履歴をHistoryオブジェクトを返すので`history`
+という変数に格納してください。
 
 ```
 history = model.fit(
@@ -96,6 +104,8 @@ history = model.fit(
 ```
 
 ## 分析
+> 先ほど格納した`history`というオブジェクトの`history`メソッドを用いて`accuracy`と`val_accuracy`の変化のグラフを`matplotlib`を用いて描写してください。
+
 ```
 import matplotlib.pyplot as plt
 
@@ -107,7 +117,10 @@ plt.plot(history.history['val_accuracy'])
 
 
 
-## テスト
+## 検証
+
+> 1. 学習したモデルクラスの[predict](https://keras.io/ja/models/model/#predict)メソッドでtestフォルダに入っている画像を予測してください。**画像のままでは使えないので画像をNumpy配列に変換し、作成したモデルの入力のテンソルにリサイズする処理をしてください。**
+> 2. 上記処理をtestフォルダ内にあるすべての画像で行い、正答率を算出してください。**正答率は(正解数/testフォルダ内の画像数)で求めることとする。**
 
 ```python
 import os
@@ -131,6 +144,7 @@ def get_label(path):
     pass
 ```
 
+
 ```python
 root_path = <テストデータフォルダパス>
 test_img_list = os.listdir(root_path)
@@ -151,6 +165,7 @@ for path in test_img_list:
 ```
 
 ## モデルの保存
+> `検証`での正答率が8割ほどであればモデルを`save`メソッドで保存してください。**この時モデルの名前に`.h5`をつけてください。**
 
 ```python
 model.save("<モデル名>.h5")
