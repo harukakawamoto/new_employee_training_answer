@@ -38,11 +38,14 @@ gen = ImageDataGenerator(
 
 ここでは`flow_from_directory`メソッドを使って`ディレクトリへのパスを受け取り，拡張/正規化したデータのバッチを生成します．`
 事前にデータを増やすというよりは**学習ごと**に`ImageDataGenerator`で設定した処理が施された画像が生成されると言った感じです。
+
 ※設定によっては加工した画像を保存することもできます。
 
 今回は３つの分類(多値分類)のため`class_mode`は`categorical`に指定します。
 
 また`subset`を指定することで学習用データと検証用データを分けてオブジェクトを生成してくれます。`ImageDataGenerator`の`validation_split`で指定した割合ごとに画像を分けてくれます。
+
+詳しいオプションについては[公式ドキュメント](https://keras.io/ja/preprocessing/image/#flow_from_directory)を参考にしてください。
 
 ```python
 train = gen.flow_from_directory(
@@ -58,7 +61,7 @@ validation = gen.flow_from_directory(
 )
 ```
 
-また`flow_from_directory`の便利なところは正解ラベルを作成してくれる便利な機能があります。指定したディレクトリのサブディレクトリごとに番号を割り振ってラベル付けしてくれます。
+また`flow_from_directory`の便利なところは**正解ラベルを作成してくれる**機能があるところです。指定したディレクトリのサブディレクトリごとに番号を割り振ってラベル付けしてくれます。
 ラベル付けされた番号とサブディレクトリとの対応は生成したオブジェクトの変数の`class_indices`で確認できます。
 
 ```python
@@ -72,6 +75,8 @@ print(label_dic)
 ## 転移学習モデルの構築
 > 1. [Kerasのドキュメント](https://keras.io/ja/applications/)から好きなモデルを選択してください。
 > 2. 選択したモデルをImageNetで学習したモデルに設定してください。
+
+
 ```python
 from tensorflow.keras.layers import Input,Dense,Flatten,Dropout
 from tensorflow.keras.optimizers import experimental
