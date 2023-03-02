@@ -3,7 +3,7 @@
 
 ## データの収集
 データの収集は今回は手作業で集めました。
-スクレイピングで集める場合は**　[selenium](https://www.selenium.dev/ja/documentation/)**や**　[beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)**などのスクレイピング用のPythonライブラリを使ってみてください。
+スクレイピングで集める場合は[selenium](https://www.selenium.dev/ja/documentation/)や[beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)などのスクレイピング用のPythonライブラリを使ってみてください。
 
 集めた画像はこちらのフォルダに入っています。
 
