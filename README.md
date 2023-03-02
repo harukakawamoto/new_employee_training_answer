@@ -190,7 +190,7 @@ history = model.fit(
 
 > 必要に応じて[EarlyStopping](https://keras.io/ja/callbacks/#earlystopping)を設定してください
 
-EarlyStoppingは学習が進まなくなったら自動的に学習を終了する設定のことです。
+**EarlyStoppingは学習が進まなくなったら自動的に学習を終了する設定のことです。**
 
 導入例は以下の通りです。
 
@@ -203,8 +203,23 @@ early_stopping = EarlyStopping(
                                 patient = 3
 )
 ```
+それぞれの引数の意味は以下の通りです。
+* `monitor`：監視する値
+* `min_delta`：監視する値について改善として判定される最小変化値．つまり，min_deltaよりも絶対値の変化が小さければ改善していないとみなします．
+* `patience`：ここで指定したエポック数の間（監視する値に）改善がないと，訓練が停止します.つまり改善しない学習をスルーする回数のことです.
 
-`earlyStopping`が設定できたら`fit`の引数に
+`earlyStopping`が設定できたら`fit`の引数に入れることで導入できます。
+
+```python
+history = model.fit(
+        train,
+        epochs=10,
+        verbose=1,
+        validation_data=validation,
+        callbacks = [early_stopping]
+)
+
+```
 
 
 ## 分析
