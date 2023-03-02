@@ -5,7 +5,7 @@
 データの収集は今回は手作業で集めました。
 スクレイピングで集める場合は[selenium](https://www.selenium.dev/ja/documentation/)や[beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)などのスクレイピング用のPythonライブラリを使ってみてください。
 
-集めた画像はこちらのフォルダに入っています。
+集めた画像は[こちらのフォルダ](https://drive.google.com/drive/folders/1ANMswUd8_muFEWA292rtf9OQsksD3xph)に入っています。
 
 ## データの前処理
 > 1. `ImageDataGenerator`インスタンスを生成してください。
@@ -348,5 +348,99 @@ print("正答率は{}".format(true_num/(len(test_img_list))))
 > `検証`での正答率が8割ほどであればモデルを`save`メソッドで保存してください。**この時モデルの名前に`.h5`をつけてください。**
 
 ```python
+model.save("<モデル名>.h5")
+```
+
+## 全体のコード
+```python
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers import Input,Dense,Flatten,Dropout
+from tensorflow.keras.optimizers import experimental
+from tensorflow.keras.applications.resnet50 import ResNet50,preprocess_input
+from tensorflow.keras import Model
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.preprocessing import image
+import matplotlib.pyplot as plt
+import os
+import numpy as np
+
+gen = ImageDataGenerator(
+    featurewise_std_normalization=True,
+    rotation_range=0.2,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    zoom_range=0.3,
+    fill_mode="constant",
+    validation_split=0.1
+)
+train = gen.flow_from_directory(
+    <学習用データフォルダのパス>,
+    class_mode='categorical',
+    subset = "training"
+)
+
+validation = gen.flow_from_directory(
+    <学習用データフォルダのパス>,
+    class_mode='categorical',
+    subset = "validation"
+)
+
+
+ResNet50 = ResNet50(weights='imagenet',include_top=False, input_tensor=Input(shape=(256,256,3
+)))
+inputs = ResNet50.output
+x = Flatten()(inputs)
+x = Dense(2048, activation='relu')(x)
+x = Dropout(0.25)(x)
+x = Dense(1024,activation='relu')(x)
+x = Dropout(0.25)(x)
+
+prediction = Dense(3,activation='softmax')(x)
+
+model=Model(inputs=ResNet50.input,outputs=prediction)
+model.compile(optimizer=experimental.SGD(),
+            loss='categorical_crossentropy',
+            metrics=['accuracy'])
+history = model.fit(
+        train,
+        epochs=10,
+        verbose=1,
+        validation_data=validation
+)
+
+
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+
+
+def get_label(path):
+  if "golf" in path:
+    return "golfball"
+  elif "tennis" in path:
+    return "tennisball"
+  elif "basket" in path:
+    return "basketball"
+  else:
+    pass
+    
+    
+root_path = <テストデータフォルダパス>
+test_img_list = os.listdir(root_path)
+# 予測が当たった数をカウントする変数
+true_num = 0
+
+for path in test_img_list:
+  input = image.load_img(os.path.join(root_path,path),target_size=(256,256))
+  input = np.expand_dims(input,axis=0)
+  input = preprocess_input(input)
+  result = model.predict(input)
+  predict_label = list(label_dic.keys())[np.argmax(result[0])]
+  acc_label = get_label(path)
+  print(predict_label, acc_label)
+  # 正答率計算
+  if predict_label == acc_label:
+    true_num += 1
+
+print("正答率は{}".format(true_num/(len(test_img_list))))
 model.save("<モデル名>.h5")
 ```
