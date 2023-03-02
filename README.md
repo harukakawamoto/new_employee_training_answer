@@ -16,6 +16,8 @@
 * `rotation_range`：画像に対してランダムに回転させる。
 * `height_shift_range`：画像に対してランダムに垂直に移動させる。
 * `zoom_range`：画像に対してランダムに拡大する。
+* `validation_split`：学習用データと検証用データの割合を指定する。
+
 上記オプション以外の詳しい説明は[公式ドキュメント](https://keras.io/ja/preprocessing/image/#imagedatagenerator_1)を見てみてください。
 
 ```python
@@ -28,7 +30,8 @@ gen = ImageDataGenerator(
     height_shift_range=0.2,
     zoom_range=0.3,
     fill_mode="constant",
-    val
+    validation_split=0.1
+)
 ```
 
 > 2. `ImageDataGenerator`クラスの`flow_from_directory`メソッドを用いて学習用のデータと検証用のデータのオブジェクトを生成してください。
@@ -37,8 +40,9 @@ gen = ImageDataGenerator(
 事前にデータを増やすというよりは**学習ごと**に`ImageDataGenerator`で設定した処理が施された画像が生成されると言った感じです。
 ※設定によっては加工した画像を保存することもできます。
 
-また
-`flow_from_directory`の便利なところは正解ラベルを作成してくれる
+今回は３つの分類(多値分類)のため`class_mode`は`categorical`に指定します。
+
+また`subset`を指定することで学習用データと検証用データを分けてオブジェクトを生成してくれます。`ImageDataGenerator`の`validation_split`で指定した割合ごとに画像を分けてくれます。
 
 ```python
 train = gen.flow_from_directory(
@@ -48,15 +52,20 @@ train = gen.flow_from_directory(
 )
 
 validation = gen.flow_from_directory(
-    <テストデータフォルダのパス>,
+    <学習用データフォルダのパス>,
     class_mode='categorical',
     subset = "validation"
 )
 ```
 
+また`flow_from_directory`の便利なところは正解ラベルを作成してくれる便利な機能があります。指定したディレクトリのサブディレクトリごとに番号を割り振ってラベル付けしてくれます。
+ラベル付けされた番号とサブディレクトリとの対応は生成したオブジェクトの変数の`class_indices`で確認できます。
+
 ```python
 label_dic = train.class_indices
 print(label_dic)
+
+# {'basketball': 0, 'golfball': 1, 'tennisball': 2}
 ```
 
 
