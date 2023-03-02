@@ -149,6 +149,21 @@ model.summary()
 
 モデルのコンパイルは[公式ドキュメント](https://keras.io/ja/models/model/#compile)を参考にして作成します。
 
+Keras・TensorFlowで扱える`optimizer(最適化アルゴリズム)`は以下の通りです。
+* Adadelta
+* Adafactor
+* Adagrad
+* Adam
+* AdamW
+* Adamax
+* Ftrl
+* Nadam
+* RMSprop
+* SGD
+
+今回はSGDを用いています。
+
+また今回のような多値分類の場合は損失関数には`categorical_crossentropy`を指定するのが効果的です。
 ```
 model.compile(optimizer=experimental.SGD(),
             loss='categorical_crossentropy',
