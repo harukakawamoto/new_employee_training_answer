@@ -9,6 +9,7 @@
 
 ## データの前処理
 > 1. `ImageDataGenerator`インスタンスを生成してください。
+
 ここでは`ImageDataGenerator`クラスでデータを擬似的に増やす処理の設定を行なっています。ImageDataGeneratorは`リアルタイムにデータ拡張しながら，テンソル画像データのバッチを生成します．また，このジェネレータは，データを無限にループするので，無限にバッチを生成します.`
 オプションでは画像に対する処理を指定することができ、下の例では画像に対して以下の処理をしています。
 * `width_shift_range`：画像に対してランダムに水平に移動させる。
@@ -32,7 +33,12 @@ gen = ImageDataGenerator(
 
 > 2. `ImageDataGenerator`クラスの`flow_from_directory`メソッドを用いて学習用のデータと検証用のデータのオブジェクトを生成してください。
 
-ここでは`flow_from_directory`メソッドを
+ここでは`flow_from_directory`メソッドを使って`ディレクトリへのパスを受け取り，拡張/正規化したデータのバッチを生成します．`
+事前にデータを増やすというよりは**学習ごと**に`ImageDataGenerator`で設定した処理が施された画像が生成されると言った感じです。
+※設定によっては加工した画像を保存することもできます。
+
+また
+`flow_from_directory`の便利なところは正解ラベルを作成してくれる
 
 ```python
 train = gen.flow_from_directory(
