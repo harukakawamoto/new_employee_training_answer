@@ -95,6 +95,8 @@ print(label_dic)
 
 `weights`に何も指定しなければ重みが0のモデルが導入されますが、`imagenet`を指定することで、ImageNetで学習されたモデルを導入することができます。
 
+ここでは導入したモデルを`ResNet50`という変数に代入しています。
+
 `include_top`はモデルの出力層を含めるかどうかのオプションで、今回は導入した既存モデルに層を加えていくため`False`にします。
 
 出力層を含むとImageNetで学習している都合上1000個の出力が行われることになり、今回の3つの出力(バスケットボール・テニスボール・ゴルフボール)に合わなくなります。
@@ -112,6 +114,17 @@ ResNet50 = ResNet50(weights='imagenet',include_top=False, input_tensor=Input(sha
 `input_tensor`でモデルに入力する画像の形を指定することができます。
 
 > 3. 学習済みモデルに[追加層](https://keras.io/ja/layers/core/)を加えてください。
+
+ここでは先ほど導入したモデルに層を追加していきます。モデルの出力層は`<モデルの変数名>output`で得ることができます。
+
+追加層は[KerasのFunctionAPI](https://keras.io/ja/getting-started/functional-api-guide/)を使って追加していきます。
+
+`Flatten`は多次元のテンソルを一次元に治すための層です。
+
+`Dense`は全結合層です。
+
+`Dropout`は重みを任意の割合で0にする層です。過学習防止に有効とされています。
+
 ```python
 inputs = ResNet50.output
 x = Flatten()(inputs)
@@ -147,7 +160,11 @@ model.compile(optimizer=experimental.SGD(),
 > 2. 学習する際に用いるfitメソッドは学習履歴をHistoryオブジェクトを返すので`history`
 という変数に格納してください。
 
-```
+モデルを学習にはモデルの`fit`メソッドを用います。`fit`メソッドは学習履歴をまとめた`History`オブジェクトを返します。
+
+引数には、学習データのバッチを生成する`train`と学習回数を指定する`epoch`、学習のプログレスバーの表示を指定する`varbose`、最後に検証用データである`validation`を渡しています。
+
+```python
 history = model.fit(
         train,
         epochs=10,
@@ -156,10 +173,22 @@ history = model.fit(
 )
 ```
 
+> 必要に応じて[EarlyStopping](https://keras.io/ja/callbacks/#earlystopping)を設定してください
+
+EarlyStoppingは学習が進まなくなったら自動的に学習を終了する設定のことです。
+
+導入例は以下の通りです。
+
+```python
+
+```
+
+Historyオブジェクトのhistoryメソッドは`accuracy`と`val_accuracy`をキーとして、各学習履歴を値とした辞書を返します。
+
 ## 分析
 > 先ほど格納した`history`というオブジェクトの`history`メソッドを用いて`accuracy`と`val_accuracy`の変化のグラフを`matplotlib`を用いて描写してください。
 
-```
+```python
 import matplotlib.pyplot as plt
 
 plt.plot(history.history['accuracy'])
