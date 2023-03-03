@@ -351,6 +351,3 @@ print("正答率は{}".format(true_num/(len(test_img_list))))
 model.save("<モデル名>.h5")
 ```
 
-## 正解のGoogle Colaboratory
-
-https://colab.research.google.com/drive/1j2IICUXPw_HFtCGHWf107DJsIU3jaodO?usp=sharing
